@@ -1,14 +1,15 @@
 import "./App.css";
-import React from 'react';
+import Home from './containers/Home/Home.tsx';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout/Layout.tsx';
+import AddOrEditForm from './containers/AddOrEditForm/AddOrEditForm.tsx';
 
 const App = () => {
   return <>
       <Layout> <Routes>
         <Route path="/" element={<Home/>}/>
-        <Route path="/addNewMeal" element={<NewOrEditMeal/>}/>
-        <Route path="/editDish/:id" element={<NewOrEditMeal/>}/>
+        <Route path="/addNewMeal" element={<AddOrEditForm/>}/>
+        <Route path="/editDish/:id" element={<AddOrEditForm/>}/>
         <Route path="*" element={<h1>Not found</h1>}/>
       </Routes></Layout>
     </>;
