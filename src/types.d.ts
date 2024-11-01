@@ -3,3 +3,10 @@ export interface IFormData {
   description:string;
   calories: number
 }
+
+export interface IMeal extends IFormData {
+  id:string
+}
+export interface IApiData {
+  [id:string]:IFormData;
+}

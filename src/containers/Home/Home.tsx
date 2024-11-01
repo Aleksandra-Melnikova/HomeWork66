@@ -1,10 +1,48 @@
 import { useNavigate } from 'react-router-dom';
+import  { useCallback, useEffect, useState } from 'react';
+import { IApiData, IMeal } from '../../types';
+import axiosAPI from '../../axiosAPI.ts';
+import Spinner from '../../components/UI/Spinner/Spinner.tsx';
+import MealItem from '../../components/MealItem/MealItem.tsx';
 
 const Home = () => {
   const navigate = useNavigate();
   const onAddForm = ()=>{
     navigate("/addNewMeal");
   }
+  const [mealInfo, setMealInfo] = useState<IMeal[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response =
+        await axiosAPI("meal.json");
+      const quotesObjects:IApiData = response.data;
+      if (quotesObjects) {
+        const meals = Object.keys(response.data).map((mealID: string) => {
+          return{
+            id:mealID,
+            ...quotesObjects[mealID],
+          };
+        });
+        setMealInfo(meals);
+
+      }
+    }
+    catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+ void fetchData();
+  }, [fetchData]);
+
+
+
   return (
     <div className=' fs-4 pt-4'>
       <div className='row justify-content-between align-items-center mb-5'>
@@ -12,7 +50,21 @@ const Home = () => {
         <button  className='col-2 btn btn-primary' type='button' onClick={onAddForm}> Add new meal</button>
 
       </div>
-      sadhghdfg
+       {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            {mealInfo.length > 0 ? (
+              <div className="container">
+                {mealInfo.map((meal) => (
+                  <MealItem timeOfMeal={meal.timeOfMeal} calories={meal.calories}  description={meal.description} key={meal.id} />
+                ))}
+              </div>
+            ) : (
+              <p>In this category no quotes</p>
+            )}
+          </>
+        )}
     </div>
   );
 };
