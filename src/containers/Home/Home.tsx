@@ -41,13 +41,20 @@ const Home = () => {
  void fetchData();
   }, [fetchData]);
 
+  const onDelete = async (meal: IMeal) => {
+    if (meal.id) {
+      await axiosAPI.delete("meal/" + meal.id + ".json");
+      void fetchData();
+    }
+  };
+
 
 
   return (
     <div className=' fs-4 pt-4'>
       <div className='row justify-content-between align-items-center mb-5'>
-        <span className='col-3'> Total calories : <strong> 0 kkal</strong></span>
-        <button  className='col-2 btn btn-primary' type='button' onClick={onAddForm}> Add new meal</button>
+        <span className='col-3 ms-3 fs-3'> Total calories : <strong> 0 kkal</strong></span>
+        <button  className='col-2 btn btn-primary fs-4' type='button' onClick={onAddForm}> Add new meal</button>
 
       </div>
        {loading ? (
@@ -57,7 +64,7 @@ const Home = () => {
             {mealInfo.length > 0 ? (
               <div className="container">
                 {mealInfo.map((meal) => (
-                  <MealItem timeOfMeal={meal.timeOfMeal} calories={meal.calories}  description={meal.description} key={meal.id} />
+                  <MealItem timeOfMeal={meal.timeOfMeal} calories={meal.calories}  description={meal.description} key={meal.id} onDelete={()=>onDelete(meal)} />
                 ))}
               </div>
             ) : (

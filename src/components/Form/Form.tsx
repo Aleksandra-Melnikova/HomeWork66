@@ -54,9 +54,9 @@ const navigate = useNavigate();
     });
   };
   return (
-    <div className='w-75 mx-auto'>
+    <div className='w-100 mx-auto '>
       <form onSubmit={onSubmit}>
-        <h3>{isEdit ? 'Edit' : 'Add new'} meal</h3>
+        <h3 className='fs-3'>{isEdit ? 'Edit' : 'Add new'} meal</h3>
         <div className="form-group mb-4 mt-4">
           <select
             required
