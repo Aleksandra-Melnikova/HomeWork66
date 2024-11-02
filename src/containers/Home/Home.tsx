@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { IApiData, IMeal } from "../../types";
+import { IApiData, IDeleteLoading, IMeal } from '../../types';
 import axiosAPI from "../../axiosAPI.ts";
 import Spinner from "../../components/UI/Spinner/Spinner.tsx";
 import MealItem from "../../components/MealItem/MealItem.tsx";
@@ -13,22 +13,31 @@ const Home = () => {
   const [mealInfo, setMealInfo] = useState<IMeal[]>([]);
   const [total, setTotal] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState<IDeleteLoading>({
+    process: false,
+    id:''
+  });
+
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosAPI("meal.json");
-      const quotesObjects: IApiData = response.data;
-      if (quotesObjects) {
+      const mealsObjects: IApiData = response.data;
+      if (mealsObjects) {
         const meals = Object.keys(response.data).map((mealID: string) => {
           return {
             id: mealID,
-            calories: Number(quotesObjects[mealID].calories),
-            description: quotesObjects[mealID].description,
-            timeOfMeal: quotesObjects[mealID].timeOfMeal,
+            calories: Number(mealsObjects[mealID].calories),
+            description: mealsObjects[mealID].description,
+            timeOfMeal: mealsObjects[mealID].timeOfMeal,
           };
         });
+
         setMealInfo(meals);
+      }
+      else{
+        setMealInfo([]);
       }
     } catch (err) {
       console.error(err);
@@ -41,7 +50,8 @@ const Home = () => {
     void fetchData();
   }, [fetchData]);
 
-  console.log(mealInfo);
+
+
 
   const totalCalories = mealInfo.reduce((acc, meal) => {
     acc += meal.calories;
@@ -54,10 +64,25 @@ const Home = () => {
 
   const onDelete = async (meal: IMeal) => {
     if (meal.id) {
-      await axiosAPI.delete("meal/" + meal.id + ".json");
+      try{
+        setIsDeleteLoading({
+          process: true,
+          id:meal.id
+        });
+
+        await axiosAPI.delete("meal/" + meal.id + ".json");
+      }
+      catch(e){
+        console.error(e);
+      }
+     finally {
+        setIsDeleteLoading({process: false,
+          id:meal.id});
+      }
       void fetchData();
     }
   };
+
   const navigateEdit = useNavigate();
   const onEdit = (meal: IMeal) => {
     navigateEdit(`/editDish/${meal.id}`);
@@ -66,7 +91,7 @@ const Home = () => {
   return (
     <div className=" fs-4 pt-4">
       <div className="row justify-content-between align-items-center mb-5">
-        <span className="col-3 ms-3 fs-3">
+        <span className="col-5 ms-3 fs-3">
           {" "}
           Total calories : <strong> {total} kkal</strong>
         </span>
@@ -87,6 +112,7 @@ const Home = () => {
             <div className="container">
               {mealInfo.map((meal) => (
                 <MealItem
+                  isDeleteLoading={isDeleteLoading}
                   onEdit={() => onEdit(meal)}
                   timeOfMeal={meal.timeOfMeal}
                   calories={meal.calories}
@@ -97,7 +123,7 @@ const Home = () => {
               ))}
             </div>
           ) : (
-            <p>In this category no quotes</p>
+            <p className='text-center'>No meals</p>
           )}
         </>
       )}

@@ -18,9 +18,9 @@ const ButtonLoading: React.FC<Props> = ({
       <button
         type={type}
         disabled={isDisabled}
-        className="btn btn-primary d-flex align-items-center"
+        className="btn btn-primary d-flex align-items-center buttons"
       >
-        <span className="me-2">{text}</span>
+        <span className="me-2 fs-4">{text}</span>
         {isLoading ? <ButtonSpinner /> : null}
       </button>
     </div>

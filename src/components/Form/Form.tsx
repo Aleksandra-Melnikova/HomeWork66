@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IFormData } from "../../types";
 import axiosAPI from "../../axiosAPI.ts";
 import { useNavigate, useParams } from "react-router-dom";
+import Spinner from '../UI/Spinner/Spinner.tsx';
 
 const initialForm = {
   timeOfMeal: "",
@@ -12,6 +13,7 @@ const initialForm = {
 
 const Form = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const[isLoadingGetPost, setIsLoadingGetPost] = useState<boolean>(false);
   const [form, setForm] = useState<IFormData>({
     ...initialForm,
   });
@@ -21,13 +23,15 @@ const Form = () => {
     const getPostToEdit = async () => {
       if (id) {
         try {
+          setIsLoadingGetPost(true);
           const response = await axiosAPI("meal/" + id + ".json");
           if (response.data) {
-            console.log(response.data);
             setForm({ ...response.data });
           }
         } catch (e) {
           console.error(e);
+        } finally {
+          setIsLoadingGetPost(false);
         }
       } else {
         setForm({ ...initialForm });
@@ -35,13 +39,14 @@ const Form = () => {
     };
     void getPostToEdit();
   }, [id]);
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
       if (id) {
         try {
-          await axiosAPI.put(`meal/${id}'.json`, form);
+          await axiosAPI.put("meal/" + id + ".json", {...form});
         } catch (e) {
           console.log(e);
         }
@@ -81,24 +86,27 @@ const Form = () => {
     });
   };
   return (
+    <>
+    {isLoadingGetPost ? (<Spinner/>):
+  (
     <div className="w-100 mx-auto ">
       <form onSubmit={onSubmit}>
-        <h3 className="fs-3">Add/edit meal</h3>
-        <div className="form-group mb-4 mt-4">
+        <h3 className="fs-1 my-5">Add/edit meal</h3>
+        <div className="form-group mb-4 mt-4 ">
           <select
             required
             value={form.timeOfMeal}
             onChange={onChangeField}
             name="timeOfMeal"
-            className="form-select"
+            className="form-select fs-3"
           >
-            <option className="fs-5" value="" disabled>
+            <option value="" disabled >
               Select a time of meal
             </option>
-            <option value="Breakfast">Breakfast</option>
+            <option  value="Breakfast">Breakfast</option>
             <option value="Snack"> Snack</option>
-            <option value="Lunch"> Lunch</option>
-            <option value="Dinner">Dinner</option>
+            <option  value="Lunch"> Lunch</option>
+            <option  value="Dinner">Dinner</option>
             ))
           </select>
         </div>
@@ -109,7 +117,7 @@ const Form = () => {
             placeholder="Meal description"
             name="description"
             onChange={onChangeField}
-            className="form-control"
+            className="form-control fs-4"
           />
         </div>
 
@@ -121,7 +129,7 @@ const Form = () => {
             placeholder="calories"
             name="calories"
             min={0}
-            className="form-control"
+            className="form-control fs-3"
           />
         </div>
         <ButtonLoading
@@ -130,8 +138,11 @@ const Form = () => {
           isDisabled={isLoading}
         />
       </form>
-    </div>
-  );
+    </div> )
+}</>
+
+);
+
 };
 
 export default Form;

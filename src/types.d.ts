@@ -10,3 +10,7 @@ export interface IMeal extends IFormData {
 export interface IApiData {
   [id: string]: IFormData;
 }
+export interface IDeleteLoading {
+  process: boolean;
+  id: string;
+}
