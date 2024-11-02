@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { IApiData, IDeleteLoading, IMeal } from '../../types';
+import { IApiData, IDeleteLoading, IMeal } from "../../types";
 import axiosAPI from "../../axiosAPI.ts";
 import Spinner from "../../components/UI/Spinner/Spinner.tsx";
+import ButtonSpinner from "../../components/UI/ButtonSpinner/ButtonSpinner.tsx";
 import MealItem from "../../components/MealItem/MealItem.tsx";
 
 const Home = () => {
@@ -15,9 +16,8 @@ const Home = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState<IDeleteLoading>({
     process: false,
-    id:''
+    id: "",
   });
-
 
   const fetchData = useCallback(async () => {
     try {
@@ -35,8 +35,7 @@ const Home = () => {
         });
 
         setMealInfo(meals);
-      }
-      else{
+      } else {
         setMealInfo([]);
       }
     } catch (err) {
@@ -50,9 +49,6 @@ const Home = () => {
     void fetchData();
   }, [fetchData]);
 
-
-
-
   const totalCalories = mealInfo.reduce((acc, meal) => {
     acc += meal.calories;
     return acc;
@@ -64,21 +60,22 @@ const Home = () => {
 
   const onDelete = async (meal: IMeal) => {
     if (meal.id) {
-      try{
+      try {
         setIsDeleteLoading({
           process: true,
-          id:meal.id
+          id: meal.id,
         });
 
         await axiosAPI.delete("meal/" + meal.id + ".json");
-      }
-      catch(e){
+      } catch (e) {
         console.error(e);
+      } finally {
+        setIsDeleteLoading({
+          process: false,
+          id: "",
+        });
       }
-     finally {
-        setIsDeleteLoading({process: false,
-          id:meal.id});
-      }
+
       void fetchData();
     }
   };
@@ -112,18 +109,25 @@ const Home = () => {
             <div className="container">
               {mealInfo.map((meal) => (
                 <MealItem
-                  isDeleteLoading={isDeleteLoading}
                   onEdit={() => onEdit(meal)}
                   timeOfMeal={meal.timeOfMeal}
                   calories={meal.calories}
                   description={meal.description}
                   key={meal.id}
+                  isDeleteLoading={isDeleteLoading.process}
                   onDelete={() => onDelete(meal)}
-                />
+                >
+                  {" "}
+                  <span className="ms-auto me-0">
+                    {isDeleteLoading && meal.id === isDeleteLoading.id ? (
+                      <ButtonSpinner />
+                    ) : null}
+                  </span>
+                </MealItem>
               ))}
             </div>
           ) : (
-            <p className='text-center'>No meals</p>
+            <p className="text-center">No meals</p>
           )}
         </>
       )}

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { IFormData } from "../../types";
 import axiosAPI from "../../axiosAPI.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import Spinner from '../UI/Spinner/Spinner.tsx';
+import Spinner from "../UI/Spinner/Spinner.tsx";
 
 const initialForm = {
   timeOfMeal: "",
@@ -13,7 +13,7 @@ const initialForm = {
 
 const Form = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const[isLoadingGetPost, setIsLoadingGetPost] = useState<boolean>(false);
+  const [isLoadingGetPost, setIsLoadingGetPost] = useState<boolean>(false);
   const [form, setForm] = useState<IFormData>({
     ...initialForm,
   });
@@ -46,7 +46,7 @@ const Form = () => {
       setIsLoading(true);
       if (id) {
         try {
-          await axiosAPI.put("meal/" + id + ".json", {...form});
+          await axiosAPI.put("meal/" + id + ".json", { ...form });
         } catch (e) {
           console.log(e);
         }
@@ -87,62 +87,62 @@ const Form = () => {
   };
   return (
     <>
-    {isLoadingGetPost ? (<Spinner/>):
-  (
-    <div className="w-100 mx-auto ">
-      <form onSubmit={onSubmit}>
-        <h3 className="fs-1 my-5">Add/edit meal</h3>
-        <div className="form-group mb-4 mt-4 ">
-          <select
-            required
-            value={form.timeOfMeal}
-            onChange={onChangeField}
-            name="timeOfMeal"
-            className="form-select fs-3"
-          >
-            <option value="" disabled >
-              Select a time of meal
-            </option>
-            <option  value="Breakfast">Breakfast</option>
-            <option value="Snack"> Snack</option>
-            <option  value="Lunch"> Lunch</option>
-            <option  value="Dinner">Dinner</option>
-            ))
-          </select>
+      {isLoadingGetPost ? (
+        <Spinner />
+      ) : (
+        <div className="w-100 mx-auto ">
+          <form onSubmit={onSubmit}>
+            <h3 className="fs-1 my-5">Add/edit meal</h3>
+            <div className="form-group mb-4 mt-4 ">
+              <select
+                required
+                value={form.timeOfMeal}
+                onChange={onChangeField}
+                name="timeOfMeal"
+                className="form-select fs-3"
+              >
+                <option value="" disabled>
+                  Select a time of meal
+                </option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Snack"> Snack</option>
+                <option value="Lunch"> Lunch</option>
+                <option value="Dinner">Dinner</option>
+                ))
+              </select>
+            </div>
+
+            <div className="form-group mb-4 ">
+              <textarea
+                value={form.description}
+                placeholder="Meal description"
+                name="description"
+                onChange={onChangeField}
+                className="form-control fs-4"
+              />
+            </div>
+
+            <div className="form-group mb-4 w-25">
+              <input
+                value={form.calories}
+                onChange={onChangeField}
+                type="number"
+                placeholder="calories"
+                name="calories"
+                min={0}
+                className="form-control fs-3"
+              />
+            </div>
+            <ButtonLoading
+              text={"save"}
+              isLoading={isLoading}
+              isDisabled={isLoading}
+            />
+          </form>
         </div>
-
-        <div className="form-group mb-4 ">
-          <textarea
-            value={form.description}
-            placeholder="Meal description"
-            name="description"
-            onChange={onChangeField}
-            className="form-control fs-4"
-          />
-        </div>
-
-        <div className="form-group mb-4 w-25">
-          <input
-            value={form.calories}
-            onChange={onChangeField}
-            type="number"
-            placeholder="calories"
-            name="calories"
-            min={0}
-            className="form-control fs-3"
-          />
-        </div>
-        <ButtonLoading
-          text={"save"}
-          isLoading={isLoading}
-          isDisabled={isLoading}
-        />
-      </form>
-    </div> )
-}</>
-
-);
-
+      )}
+    </>
+  );
 };
 
 export default Form;
