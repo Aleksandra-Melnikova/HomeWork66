@@ -1,7 +1,12 @@
 
 import Form from '../../components/Form/Form.tsx';
+import React from 'react';
 
-const AddOrEditForm = () => {
+interface Props {
+  isEdit?: boolean;
+}
+
+const AddOrEditForm:React.FC<Props> = () => {
   return (
     <div>
       <Form/>

@@ -4,8 +4,9 @@ export interface MealItem {
   description:string;
   calories: number,
   onDelete: (e: React.MouseEvent) => void;
+  onEdit: (e: React.MouseEvent) => void;
 }
-const MealItem:React.FC<MealItem> = ({timeOfMeal,  description,calories, onDelete}) => {
+const MealItem:React.FC<MealItem> = ({timeOfMeal,  description,calories, onDelete, onEdit}) => {
   return (
     <div className='d-flex gap-2 mt-3 align-items-center border border-1 p-4 fs-3'>
       <div className='col-7 text-start'>
@@ -16,7 +17,7 @@ const MealItem:React.FC<MealItem> = ({timeOfMeal,  description,calories, onDelet
         <strong>{calories} kkal</strong>
       </div>
       <div className='me-3'>
-        <button className='d-block mb-2 button-edit buttons-ic '></button>
+        <button onClick={onEdit} className='d-block mb-2 button-edit buttons-ic '></button>
         <button  onClick={onDelete} className='d-block button-reset buttons-ic'></button>
       </div>
 

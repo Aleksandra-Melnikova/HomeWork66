@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import  { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { IApiData, IMeal } from '../../types';
 import axiosAPI from '../../axiosAPI.ts';
 import Spinner from '../../components/UI/Spinner/Spinner.tsx';
@@ -9,7 +9,7 @@ const Home = () => {
   const navigate = useNavigate();
   const onAddForm = ()=>{
     navigate("/addNewMeal");
-  }
+  };
   const [mealInfo, setMealInfo] = useState<IMeal[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -47,7 +47,10 @@ const Home = () => {
       void fetchData();
     }
   };
-
+  const navigateEdit = useNavigate();
+  const onEdit = (meal: IMeal) => {
+    navigateEdit(`/editDish/${meal.id}`);
+  };
 
 
   return (
@@ -64,7 +67,7 @@ const Home = () => {
             {mealInfo.length > 0 ? (
               <div className="container">
                 {mealInfo.map((meal) => (
-                  <MealItem timeOfMeal={meal.timeOfMeal} calories={meal.calories}  description={meal.description} key={meal.id} onDelete={()=>onDelete(meal)} />
+                  <MealItem onEdit={()=>onEdit(meal)} timeOfMeal={meal.timeOfMeal} calories={meal.calories}  description={meal.description} key={meal.id} onDelete={()=>onDelete(meal)} />
                 ))}
               </div>
             ) : (

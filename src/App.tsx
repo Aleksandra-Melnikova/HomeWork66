@@ -9,7 +9,7 @@ const App = () => {
       <Layout> <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/addNewMeal" element={<AddOrEditForm/>}/>
-        <Route path="/editDish/:id" element={<AddOrEditForm/>}/>
+        <Route path="/editDish/:id" element={<AddOrEditForm isEdit={true}/>}/>
         <Route path="*" element={<h1>Not found</h1>}/>
       </Routes></Layout>
     </>;
