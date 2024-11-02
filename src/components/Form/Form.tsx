@@ -1,13 +1,13 @@
-import ButtonLoading from '../UI/ButtonLoading/ButtonLoading';
-import { useEffect, useState } from 'react';
-import { IFormData } from '../../types';
-import axiosAPI from '../../axiosAPI.ts';
-import { useNavigate, useParams } from 'react-router-dom';
+import ButtonLoading from "../UI/ButtonLoading/ButtonLoading";
+import { useEffect, useState } from "react";
+import { IFormData } from "../../types";
+import axiosAPI from "../../axiosAPI.ts";
+import { useNavigate, useParams } from "react-router-dom";
 
 const initialForm = {
-  timeOfMeal:"",
-  description:'',
-  calories: 0
+  timeOfMeal: "",
+  description: "",
+  calories: 0,
 };
 
 const Form = () => {
@@ -15,72 +15,65 @@ const Form = () => {
   const [form, setForm] = useState<IFormData>({
     ...initialForm,
   });
-const navigate = useNavigate();
-  const {id} = useParams();
+  const navigate = useNavigate();
+  const { id } = useParams();
   useEffect(() => {
-    const getPostToEdit = async ()=>{
-      if(id){
-        try{
-          const response = await axiosAPI('meal/'+id+'.json');
-          if(response.data){
+    const getPostToEdit = async () => {
+      if (id) {
+        try {
+          const response = await axiosAPI("meal/" + id + ".json");
+          if (response.data) {
             console.log(response.data);
-            setForm({...response.data});
+            setForm({ ...response.data });
           }
-        }
-        catch (e){
+        } catch (e) {
           console.error(e);
         }
-      }
-      else{
-        setForm({...initialForm});
+      } else {
+        setForm({ ...initialForm });
       }
     };
     void getPostToEdit();
   }, [id]);
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      setIsLoading(true);
+      if (id) {
         try {
-          setIsLoading(true);
-          if(id){
-            try{
-              await axiosAPI.put(`meal/${id}'.json`, form );
-            }
-            catch (e){
-              console.log(e);
-            }
+          await axiosAPI.put(`meal/${id}'.json`, form);
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        try {
+          if (
+            form.timeOfMeal.trim().length > 0 &&
+            form.description.trim().length > 0 &&
+            form.calories > 0
+          ) {
+            await axiosAPI.post("meal.json", { ...form });
+            setForm({ ...initialForm });
+            navigate("/");
+          } else {
+            alert("Fill in all fields");
           }
-          else{
-            try{
-              if (
-                form.timeOfMeal.trim().length > 0 &&
-                form.description.trim().length > 0 && form.calories >0
-              ) {
-                await axiosAPI.post("meal.json", { ...form });
-                setForm({...initialForm});
-                navigate("/");
-              } else {
-                alert("Fill in all fields");
-              }
-            }
-            catch (e){
-              console.error(e);
-            }
-          }
-
         } catch (e) {
           console.error(e);
-        } finally {
-            setIsLoading(false);
         }
-
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
   const onChangeField = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
-
-    setForm(prevState => {
+    setForm((prevState) => {
       return {
         ...prevState,
         [e.target.name]: e.target.value,
@@ -88,9 +81,9 @@ const navigate = useNavigate();
     });
   };
   return (
-    <div className='w-100 mx-auto '>
+    <div className="w-100 mx-auto ">
       <form onSubmit={onSubmit}>
-        <h3 className='fs-3'>Add/edit meal</h3>
+        <h3 className="fs-3">Add/edit meal</h3>
         <div className="form-group mb-4 mt-4">
           <select
             required
@@ -110,31 +103,35 @@ const navigate = useNavigate();
           </select>
         </div>
 
-          <div className="form-group mb-4 ">
-            <textarea
-              value={form.description}
-            placeholder='Meal description'
-              name="description"
+        <div className="form-group mb-4 ">
+          <textarea
+            value={form.description}
+            placeholder="Meal description"
+            name="description"
             onChange={onChangeField}
-              className="form-control"
-            />
-          </div>
+            className="form-control"
+          />
+        </div>
 
-          <div className="form-group mb-4 w-25">
-            <input
-              value={form.calories}
-              onChange={onChangeField}
-              type="number"
-      placeholder='calories'
-              name="calories"
-              min={0}
-              className="form-control"
-            />
-          </div>
-          <ButtonLoading text={'save'} isLoading={isLoading} isDisabled={isLoading}/>
+        <div className="form-group mb-4 w-25">
+          <input
+            value={form.calories}
+            onChange={onChangeField}
+            type="number"
+            placeholder="calories"
+            name="calories"
+            min={0}
+            className="form-control"
+          />
+        </div>
+        <ButtonLoading
+          text={"save"}
+          isLoading={isLoading}
+          isDisabled={isLoading}
+        />
       </form>
     </div>
-);
+  );
 };
 
 export default Form;

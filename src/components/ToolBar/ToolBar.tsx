@@ -7,9 +7,11 @@ const ToolBar = () => {
       <nav className="navbar navbar-expand-lg bg-primary">
         <div className="container">
           <NavLink to="/">
-            <span className="navbar-brand mb-0 text-white fs-1">Calorie tracker</span>
+            <span className="navbar-brand mb-0 text-white fs-1">
+              Calorie tracker
+            </span>
           </NavLink>
-          </div>
+        </div>
       </nav>
     </>
   );

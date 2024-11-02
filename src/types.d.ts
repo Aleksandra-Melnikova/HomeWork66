@@ -1,12 +1,12 @@
 export interface IFormData {
-  timeOfMeal:string;
-  description:string;
-  calories: number
+  timeOfMeal: string;
+  description: string;
+  calories: number;
 }
 
 export interface IMeal extends IFormData {
-  id:string
+  id: string;
 }
 export interface IApiData {
-  [id:string]:IFormData;
+  [id: string]: IFormData;
 }

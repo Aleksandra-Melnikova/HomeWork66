@@ -1,15 +1,14 @@
-
-import Form from '../../components/Form/Form.tsx';
-import React from 'react';
+import Form from "../../components/Form/Form.tsx";
+import React from "react";
 
 interface Props {
   isEdit?: boolean;
 }
 
-const AddOrEditForm:React.FC<Props> = () => {
+const AddOrEditForm: React.FC<Props> = () => {
   return (
     <div>
-      <Form/>
+      <Form />
     </div>
   );
 };
