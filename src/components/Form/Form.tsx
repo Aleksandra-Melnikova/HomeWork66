@@ -4,11 +4,13 @@ import { IFormData } from "../../types";
 import axiosAPI from "../../axiosAPI.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../UI/Spinner/Spinner.tsx";
+import { toast } from "react-toastify";
 
 const initialForm = {
   timeOfMeal: "",
   description: "",
   calories: 0,
+  data: new Date().toISOString().substr(0, 10),
 };
 
 const Form = () => {
@@ -47,6 +49,7 @@ const Form = () => {
       if (id) {
         try {
           await axiosAPI.put("meal/" + id + ".json", { ...form });
+          toast.success("Changes added successfully.");
         } catch (e) {
           console.log(e);
         }
@@ -93,6 +96,15 @@ const Form = () => {
         <div className="w-100 mx-auto ">
           <form onSubmit={onSubmit}>
             <h3 className="fs-1 my-5">Add/edit meal</h3>
+            <div className="form-group mb-4 w-25">
+              <input
+                value={form.data}
+                onChange={onChangeField}
+                type="date"
+                name="data"
+                className="form-control fs-3"
+              />
+            </div>
             <div className="form-group mb-4 mt-4 ">
               <select
                 required

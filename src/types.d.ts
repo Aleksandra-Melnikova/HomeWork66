@@ -2,6 +2,7 @@ export interface IFormData {
   timeOfMeal: string;
   description: string;
   calories: number;
+  data: string;
 }
 
 export interface IMeal extends IFormData {

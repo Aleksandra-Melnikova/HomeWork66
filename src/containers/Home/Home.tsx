@@ -5,6 +5,8 @@ import axiosAPI from "../../axiosAPI.ts";
 import Spinner from "../../components/UI/Spinner/Spinner.tsx";
 import ButtonSpinner from "../../components/UI/ButtonSpinner/ButtonSpinner.tsx";
 import MealItem from "../../components/MealItem/MealItem.tsx";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import dayjs from "dayjs";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -31,10 +33,14 @@ const Home = () => {
             calories: Number(mealsObjects[mealID].calories),
             description: mealsObjects[mealID].description,
             timeOfMeal: mealsObjects[mealID].timeOfMeal,
+            data: mealsObjects[mealID].data,
           };
         });
+        const mealsSort = meals.sort((a, b) => {
+          return new Date(a.data).getTime() - new Date(b.data).getTime();
+        });
 
-        setMealInfo(meals);
+        setMealInfo(mealsSort.reverse());
       } else {
         setMealInfo([]);
       }
@@ -50,7 +56,10 @@ const Home = () => {
   }, [fetchData]);
 
   const totalCalories = mealInfo.reduce((acc, meal) => {
-    acc += meal.calories;
+    const date = new Date().toISOString().substr(0, 10);
+    if (meal.data === date) {
+      acc += meal.calories;
+    }
     return acc;
   }, 0);
 
@@ -80,6 +89,8 @@ const Home = () => {
     }
   };
 
+  dayjs.extend(localizedFormat);
+
   const navigateEdit = useNavigate();
   const onEdit = (meal: IMeal) => {
     navigateEdit(`/editDish/${meal.id}`);
@@ -88,9 +99,9 @@ const Home = () => {
   return (
     <div className=" fs-4 pt-4">
       <div className="row justify-content-between align-items-center mb-5">
-        <span className="col-5 ms-3 fs-3">
+        <span className="col-7 ms-3 fs-3">
           {" "}
-          Total calories : <strong> {total} kkal</strong>
+          Total calories for today : <strong> {total} kkal</strong>
         </span>
         <button
           className="col-2 btn btn-primary fs-4"
@@ -113,6 +124,7 @@ const Home = () => {
                   timeOfMeal={meal.timeOfMeal}
                   calories={meal.calories}
                   description={meal.description}
+                  data={dayjs(meal.data).format("ll")}
                   key={meal.id}
                   isDeleteLoading={isDeleteLoading.process}
                   onDelete={() => onDelete(meal)}
